@@ -33,6 +33,7 @@ public enum EquipmentInventorySlot
 	BODY(4),
 	SHIELD(5),
 	LEGS(7),
+	AMMUNITION(8),
 	GLOVES(9),
 	BOOTS(10),
 	RING(12);

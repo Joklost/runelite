@@ -2,6 +2,8 @@ package net.runelite.client.plugins.equipmentstats;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 import net.runelite.api.Client;
 import net.runelite.api.EquipmentInventorySlot;
@@ -17,9 +19,15 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.util.QueryRunner;
 
 import javax.inject.Inject;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 @PluginDescriptor(name = "Equipment Stats")
 public class EquipmentStatsPlugin extends Plugin {
@@ -102,7 +110,7 @@ public class EquipmentStatsPlugin extends Plugin {
         put("Amulet of glory", new EquipmentItem("Amulet of glory", EquipmentInventorySlot.AMULET, false, new CombatStats(10, 10, 10, 10, 10, 3, 3, 3, 3, 3, 6, 0, 0, 3, 0, 0)));
         put("Amulet of magic", new EquipmentItem("Amulet of magic", EquipmentInventorySlot.AMULET, false, new CombatStats(0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)));
         put("Amulet of power", new EquipmentItem("Amulet of power", EquipmentInventorySlot.AMULET, false, new CombatStats(6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0, 0, 1, 0, 0)));
-        put("Amulet of meleeStrength", new EquipmentItem("Amulet of meleeStrength", EquipmentInventorySlot.AMULET, false, new CombatStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0)));
+        put("Amulet of strength", new EquipmentItem("Amulet of strength", EquipmentInventorySlot.AMULET, false, new CombatStats(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 0, 0)));
         put("Amulet of the damned", new EquipmentItem("Amulet of the damned", EquipmentInventorySlot.AMULET, false, new CombatStats(10, 10, 10, 10, 10, 3, 3, 3, 3, 3, 6, 0, 0, 3, 0, 0)));
         put("Amulet of torture", new EquipmentItem("Amulet of torture", EquipmentInventorySlot.AMULET, false, new CombatStats(15, 15, 15, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 2, 0, 0)));
         put("Ancestral hat", new EquipmentItem("Ancestral hat", EquipmentInventorySlot.HEAD, false, new CombatStats(0, 0, 0, 8, -2, 12, 11, 13, 5, 0, 0, 0, 2, 0, 0, 0)));
@@ -902,9 +910,6 @@ public class EquipmentStatsPlugin extends Plugin {
 
     @Inject
     private Client client;
-//
-//    @Getter
-//    private WidgetItem[] cachedEquipment;
 
     @Override
     public Overlay getOverlay() {
@@ -915,23 +920,15 @@ public class EquipmentStatsPlugin extends Plugin {
         return equipmentItems;
     }
 
-//    @Subscribe
-//    public void onGameTick(GameTick event)
-//    {
-//        Widget equipmentWidget = client.getWidget(WidgetInfo.EQUIPMENT);
-//
-//        if (equipmentWidget != null && !equipmentWidget.isHidden())
-//        {
-//            WidgetItem[] items = getEquippedItems();
-//            if (items.length > 0) {
-//                cachedEquipment = items;
-//            }
-//        }
-//
-//    }
-
-//    private WidgetItem[] getEquippedItems() {
-//        WidgetItem[] equippedItems = queryRunner.runQuery(new EquipmentItemQuery());
-//        return equippedItems.clone();
-//    }
+    public EquipmentStatsPlugin() {
+        FileWriter fr = null;
+        try {
+            fr = new FileWriter("C:\\Users\\joklo\\Desktop\\stats.json", true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Gson parser = new Gson();
+        Type type = new TypeToken<Map<String, EquipmentItem>>() {}.getType();
+        parser.toJson(equipmentItems, type, fr);
+    }
 }
